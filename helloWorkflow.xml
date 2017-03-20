@@ -1,0 +1,178 @@
+<!--
+  ~ Levels Beyond CONFIDENTIAL
+  ~
+  ~ Copyright 2003 - 2016 Levels Beyond Incorporated
+  ~ All Rights Reserved.
+  ~
+  ~ NOTICE:  All information contained herein is, and remains
+  ~ the property of Levels Beyond Incorporated and its suppliers,
+  ~ if any.  The intellectual and technical concepts contained
+  ~ herein are proprietary to Levels Beyond Incorporated
+  ~ and its suppliers and may be covered by U.S. and Foreign Patents,
+  ~ patents in process, and are protected by trade secret or copyright law.
+  ~ Dissemination of this information or reproduction of this material
+  ~ is unlawful and strictly forbidden unless prior written permission is obtained
+  ~ from Levels Beyond Incorporated.
+  -->
+
+<workflow xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://levelsbeyond.com/schema/workflow"
+    xmlns:nimbus="http://levelsbeyond.com/schema/workflow/nimbus"
+    xsi:schemaLocation="http://levelsbeyond.com/schema/workflow http://www.levelsbeyond.com/schema/latest/studio.xsd"
+    id="helloWorkflow"
+    name="Hello Workflow"
+    description="
+      The intetion of this workflow is to show examples of different workflow steps and how to test them, where they print information, 
+      and how to pass data defs between worfklows
+    "
+    executionLabelExpression="A Hello World Workflow >>> Hello Workflow Input: ${userHello} | Allow Subflow Processing? >>> ${allowSubflowProcessing}"
+    deadlineExpression=""
+    subjectDOClassName=""
+    showInUserInterface="true"
+    sdkVersion="5.4">
+    
+    
+    <!-- The initial step must always point to the first step in a workflow -->
+    <initialStepName>execute hello workflow</initialStepName>
+    <!-- .......................................... define helloWorkflow based on user input .......................................... -->
+    <!-- see if there was user input,
+            if the user did not enter anything or entered 'Hello Workflow' >>> set the value of userHello to helloWorkflow dataDef (variable)
+            if the user entered something different than 'Hello Workflow' >>> set the value of groovyHello to the helloWorkflow dataDef
+    -->
+    <noopStep name="execute hello workflow"
+      executionLabelExpression="Checking the value of userHello >>> ${userHello}"
+      pctComplete="10"
+      >
+      <transition condition="${userHello.toLowerCase().equals('hello workflow')}">
+        <targetStepName>set helloWorkflow</targetStepName>
+      </transition>
+      <transition condition="${true}">
+        <targetStepName>groovy hello</targetStepName>
+      </transition>
+    </noopStep>
+  
+  
+  
+    <!-- set helloWorkflow to the value of userHello -->
+    <setContextData name="set helloWorkflow"
+      valueExpression="${userHello}"
+      executionLabelExpression="Setting userHello to ${userHello}"
+      targetDataDef="helloWorkflow"
+      nextStep="test hello"
+      pctComplete="25"
+      />
+  
+  
+  
+    <!-- step into groovy to set the value of  -->
+    <groovyStep name="groovy hello" 
+      resultDataDef="helloWorkflow"
+      executionLabelExpression="Print out the value of helloWorkflow >>> ${helloWorkflow}"
+      nextStep="test hello"
+      pctComplete="25"
+      >
+      <script>
+        <![CDATA[
+        
+          println ""
+          println "*************************************"
+          println ""
+          println "START Parent Groovy: "
+          println ""
+          println "If the value of userHello is not 'Hello Workflow',"
+          println "     Then set the value of helloWorkflow to '" + groovyHello +"'"
+          println ""
+          println "userHello input == " + userHello
+          println ""
+          println "END"
+          println ""
+          println "*************************************"
+          println ""
+          
+          return groovyHello
+          
+        ]]>
+      </script>
+    </groovyStep>
+      
+      
+      
+    <!-- print value of helloWorkflow and userHello to the logs -->
+    <testStep name="test hello" 
+      outputExpression="You entered Hello Workflow String >>> ${userHello} | Passing down helloWorkflow >>> ${helloWorkflow}" 
+      executionLabelExpression="You entered Hello Workflow String >>> ${userHello} | Passing down helloWorkflow >>> ${helloWorkflow}" 
+      pctComplete="55"
+      nextStep="hello workflow to hello world"
+      />
+    
+    
+    
+    
+    
+    
+    <!-- .......................................... send helloWorkflow to helloWorldWorkflow for processing .......................................... -->
+    <!-- send helloWorkflow to helloWorldWorkflow,
+            then evaluate what we get back 
+    -->
+    <executeSubflowStep name="hello workflow to hello world"
+      executionLabelExpression="Sending ${helloWorkflow} to get processed | Allow Processing? >>> ${allowSubflowProcessing} "
+      targetWorkflowId="helloWorldWorkflow"
+      resultDataDef="helloWorld"
+      subjectChangePath="${helloWorkflow}"
+      subflowTargetDataDef="helloWorkflow"
+      nextStep="set success or failure"
+      pctComplete="85"
+      >
+      <subflowContextDataMapping parentDataDef="allowSubflowProcessing" subflowDataDef="allowSubflowProcessing"/>
+    </executeSubflowStep>
+    
+    
+  
+    <!-- set if we set helloWorld to 'Hello World' -->
+    <setContextData name="set success or failure"
+      executionLabelExpression="Setting the value of success to '${helloWorld.toLowerCase().equals('hello world')}'"
+      valueExpression="${helloWorld.toLowerCase().equals('hello world')}"
+      targetDataDef="success"
+      pctComplete="96"
+      >
+      <transition condition="${success}">
+        <targetStepName>we won</targetStepName>
+      </transition>
+      <transition condition="${true}">
+        <targetStepName>we lost</targetStepName>
+      </transition>
+    </setContextData>
+    
+    <noopStep name="we won"
+      executionLabelExpression="YAAAAAAY >>> helloWorld == ${helloWorld}"
+      pctComplete="99"
+      nextStep="end"
+      />
+  
+    <failWorkflowStep name="we lost"
+      pctComplete="99"
+      reasonExpression="Booooooooooo >>> helloWorld == ${helloWorld}" 
+      executionLabelExpression="Booooooooooo >>> helloWorld == ${helloWorld}"
+      />
+  
+    <!-- ........................................... Ending Steps .......................................... -->
+    <!-- While not required, having an end step is usually a good idea -->
+    <noopStep name="end"
+      pctComplete="100"
+    />
+    
+
+    <!-- ........................................ Context Data Defs ........................................ -->
+    <!-- User Input Data Defs-->
+    <contextDataDef name="userHello"                dataType="String"  userInput="true"  label="Hello Workflow Input: "      defaultDataExpression="Hello Workflow"/>
+    <contextDataDef name="allowSubflowProcessing"   dataType="Boolean" userInput="true"  label="Allow Subflow Processing: "  defaultDataExpression="${true}"/>
+    
+    <!-- Default Data Defs -->
+    <contextDataDef name="groovyHello"      dataType="String"  defaultDataExpression="Groovy Hello"/>
+  
+    <!-- Processing Data Defs -->
+    <contextDataDef name="helloWorkflow"        dataType="String"/>
+    <contextDataDef name="helloWorld"           dataType="String"/>
+    <contextDataDef name="success"              dataType="Boolean"/>
+    
+</workflow>
