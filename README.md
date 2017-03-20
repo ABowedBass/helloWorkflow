@@ -47,7 +47,7 @@ workflow.defaultUserHello=Hello \\World
 
 
 #### helloWorldWorkflow
-* Sends the file to ingest to baseIngestFile, sets metadata on the asset, and sends the asset to a createProxiesAnyAsset workflow to generate a proxy
+* uses the value of 'helloWorkflow'(which will either be 'Groovy Hello' or 'Hello Workflow') to parse the string to the value of 'Hello World'
 
 
 ### Flow:
