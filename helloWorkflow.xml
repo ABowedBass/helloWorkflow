@@ -37,7 +37,7 @@
     <!-- .......................................... define helloWorkflow based on user input .......................................... -->
     <!-- see if there was user input,
             if the user did not enter anything or entered 'Hello Workflow' >>> set the value of userHello to helloWorkflow dataDef (variable)
-            if the user entered something different than 'Hello Workflow' >>> set the value of groovyHello to the helloWorkflow dataDef
+                if the user entered something different than 'Hello Workflow' >>> set the value of groovyHello to the helloWorkflow dataDef
     -->
     <noopStep name="execute hello workflow"
       executionLabelExpression="Checking the value of userHello >>> ${userHello}"
@@ -128,7 +128,10 @@
     
     
   
-    <!-- set if we set helloWorld to 'Hello World' -->
+    <!-- set if we set helloWorld to 'Hello World' 
+            if helloWorld == 'Hello World', we won
+                if not, we lost... 
+    -->
     <setContextData name="set success or failure"
       executionLabelExpression="Setting the value of success to '${helloWorld.toLowerCase().equals('hello world')}'"
       valueExpression="${helloWorld.toLowerCase().equals('hello world')}"
@@ -143,17 +146,25 @@
       </transition>
     </setContextData>
     
+    
+    
+    <!-- we totally did it! -->
     <noopStep name="we won"
       executionLabelExpression="YAAAAAAY >>> helloWorld == ${helloWorld}"
       pctComplete="99"
       nextStep="end"
       />
-  
+    
+    
+    
+    <!-- we totally didn't do it... -->
     <failWorkflowStep name="we lost"
-      pctComplete="99"
+      pctComplete="100"
       reasonExpression="Booooooooooo >>> helloWorld == ${helloWorld}" 
       executionLabelExpression="Booooooooooo >>> helloWorld == ${helloWorld}"
       />
+  
+  
   
     <!-- ........................................... Ending Steps .......................................... -->
     <!-- While not required, having an end step is usually a good idea -->
@@ -164,15 +175,15 @@
 
     <!-- ........................................ Context Data Defs ........................................ -->
     <!-- User Input Data Defs-->
-    <contextDataDef name="userHello"                dataType="String"  userInput="true"  label="Hello Workflow Input: "      defaultDataExpression="Hello Workflow"/>
-    <contextDataDef name="allowSubflowProcessing"   dataType="Boolean" userInput="true"  label="Allow Subflow Processing: "  defaultDataExpression="${true}"/>
+    <contextDataDef name="userHello"                dataType="String"  userInput="true"  label="01. Hello Workflow Input: "      defaultDataExpression="${#sysconfig('workflow.defaultUserHello')"/>
+    <contextDataDef name="allowSubflowProcessing"   dataType="Boolean" userInput="true"  label="02. Allow Subflow Processing: "  defaultDataExpression="${true}"/>
     
     <!-- Default Data Defs -->
-    <contextDataDef name="groovyHello"      dataType="String"  defaultDataExpression="Groovy Hello"/>
+    <contextDataDef name="groovyHello"              dataType="String"  defaultDataExpression="${#sysconfig('workflow.groovyHello')}"/>
   
     <!-- Processing Data Defs -->
-    <contextDataDef name="helloWorkflow"        dataType="String"/>
-    <contextDataDef name="helloWorld"           dataType="String"/>
-    <contextDataDef name="success"              dataType="Boolean"/>
+    <contextDataDef name="helloWorkflow"            dataType="String"/>
+    <contextDataDef name="helloWorld"               dataType="String"/>
+    <contextDataDef name="success"                  dataType="Boolean"/>
     
 </workflow>
