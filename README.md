@@ -1,9 +1,9 @@
 # Training Hello Workflow README
 
 ## Workflow Overview
-These workflows are designed to show different ways that variables can be set, passed down to subflows, and returned to the parent workflows. They also show how to use some of the different ways to print out values to different places (Reach Engine Logs, Catalina Logs, and execution label expressions). The end result will be transforming a string to equal 'Hello World'. If 'Hello World' is not the resulting string of the workflow, the workflow will fail.
+These workflows are designed to show different ways that variables can be set, changed, passed down to subflows, and returned to parent workflows. They also show some of the different ways to print out values of dataDefs to different places (Reach Engine Logs, Catalina Logs, and execution label expressions). The end result will be transform a string to equal 'Hello World'. If 'Hello World' is not the resulting string of the workflow, the workflow will fail.
 
-## Import Order
+## Import Order (The workflows that start with 'bad' are just bad formatting. They will accomplish the same goal, but they do not adhere to best practices)
 1. helloWorldWorkflow
 2. helloWorkflow
 
@@ -51,7 +51,7 @@ These workflows are designed to show different ways that variables can be set, p
 * checks value of allowSubflowProcessing
     * If allowSubflowProcessing == true, go to 'set helloWorld'
     * Else, go to end
-    
+
 * uses the value of the string, 'helloWorkflow'(which will either be 'Groovy Hello' or 'Hello Workflow'), to parse the string to 'Hello World' within a groovy step
 
 * When 'helloWorldWorkflow' completes, it will return the value of helloWorld to the parent workflow, 'helloWorkflow'.
