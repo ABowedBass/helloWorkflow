@@ -22,9 +22,9 @@
     id="helloWorldWorkflow"
     name="Hello World Workflow"
     description="
-      If allowSubflowProcessing is 'true', then the workflow will change the value of the data def to 'Hello World'
+      If allowSubflowProcessing is 'true', then the workflow will change the value of helloWorld to 'Hello World' and return it to the parent workflow.
     "
-    executionLabelExpression="If allowSubflowProcess is true (${allowSubflowProcessing}), then return 'Hello World' to parent workflow"
+    executionLabelExpression="allowSubflowProcessing is ${allowSubflowProcessing}. If 'true', then return 'Hello World' to parent workflow"
     deadlineExpression=""
     subjectDOClassName=""
     resultDataDef="helloWorld"
@@ -34,7 +34,8 @@
     sdkVersion="5.4">
     
     <initialStepName>check allowSubflowProcessing</initialStepName>
-    <!-- .......................................... First Section .......................................... -->
+    <!-- .......................................... Check allowSubflowProcessing and Set helloWorld .......................................... -->
+    <!-- Check allowSubflowProcessing -->
     <noopStep name="check allowSubflowProcessing"
       executionLabelExpression="helloWorkflow == ${helloWorkflow} | Allow Subflow Processing? >>> ${allowSubflowProcessing}"
       pctComplete="20"
@@ -48,7 +49,7 @@
     </noopStep>
     
     
-    
+    <!-- Parse the string passed in from parent, return 'Hello World' -->
     <groovyStep name="set helloWorld" 
       resultDataDef="helloWorld"
       executionLabelExpression="Setting the value of helloWorld to ${helloWorld}"
@@ -63,23 +64,26 @@
               println ""
               println "*********************************"
               println ""
-              println "START Subflow Groovy"
-              println "Hello World Workflow" 
+              println "START helloWorldWorkflow" 
               println ""
+              println "Original String: "
+              println helloWorkflow
+              println ""
+              println "Array after split: "
               println helloStringArray.toString()
           
           
           if (helloStringArray[0].toLowerCase().equals("groovy"))
           {
                   println ""
-                  println "This is a 'Groovy Hello'"
+                  println "helloWorkflow == 'Groovy Hello'"
               
               helloWorldString = helloStringArray[1] + " World"
           
           }
           else{
                   println ""
-                  println "This is a 'Hello Workflow'"
+                  println "helloWorkflow == 'Hello Workflow'"
                   
               helloWorldString = helloStringArray[0] + " World"
           }

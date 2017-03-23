@@ -1,58 +1,32 @@
-## Best Practices
+# Best Practices
 
-* Descriptions/Readme:
-  * Make sure descriptions and readme are, you guessed it, descriptive: Describe what the workflow is designed to accomplish, any necessary configurations, etc
+## Descriptions/Readme:
+  * Make sure descriptions and readme are, you guessed it, descriptive.
+      * Give an overview of the whole workflow process, which may entail multiple workflows
+      * **IMPORTANT** Import order is very important for workflows. If a workflow calls a subflow, that subflow _must_ be in Reach Engine before importing the parent. It will fail to import otherwise
+      * Descriptions:
+          * User Inputs to the workflows
+          * Are there any necessary system configurations that need to be added for the workflow to function?
+          * Describe the workflows (typically starting with the parent and going down the chain to all of the workflows involved in the process)
+      * The Flow of work, from once workflow to the next.
 
 * Comments:
   * Just like any other traditional programming language, comments help anyone else who is looking at your code
   * \<!-- we are looking at this comment that is showing how to comment out a comment with the hopes that this comment accurately depicts a comment -->
   * very helpful when looping within the workflow \<!-- here is the start of a loop and it's conditions for when it will loop or exit --> _THELOOP_THATISLOOPING_ \<!-- here is the end of the loop and the conditions to loop or to exit -->
 
-* Step Names
-  *  
-    * If a convertVideoStep is transcoding a proxy, name the step accordingly:
-        * name="create proxy" or "generate proxy"
-    * A noopStep is transitioning based on whether a file exists within the managed repo or not:
-        * name="check if file exists"
-    * Transitioning using a noopStep vs transitions
-    * Example of a transition using the noopStep above:
-    \<!-- check if file exists
-              if true, go to step name="continue processing"
-                else, go to step name="error handling / fail step" -->
-    <noopStep name="check if file exists"
-      executionLabelExpression="Check if ${yourFile.absolutePath} exists"
-      \>
-      <transition condition="${yourFile.exists()}">\<!-- if true, go to continue processing -->
-        <targetStepName>continue processing</targetStepName>
-      </transition>
-      <transition condition="${true}">\<!-- if the above condition is false, default to true here | ALWAYS HAVE THE LAST TRANSITION DEFAULT TRUE -->
-        <targetStepName>error handling / fail step</targetStepName>
-      </transition>
-    </noopStep>
-    \<!-- can have as many transitions as necessary -->
+* Step Names:
+    * Make Step names descriptive:
+        * If a convertVideoStep is transcoding a proxy video file, name the step accordingly:
+            * name="create proxy" or "generate proxy"
 
-    Real world example:
-    <setContextData name="determine media type"
-	                targetDataDef="mediaType"
-	                valueExpression="${#mediaType(fileToIngest)}"
-		\>
-		<transition condition="${mediaType == 'VIDEO'}">
-			<targetStepName>ingest video asset</targetStepName>
-		</transition>
-		<transition condition="${mediaType == 'AUDIO'}">
-			<targetStepName>ingest audio asset</targetStepName>
-		</transition>
-		<transition condition="${mediaType == 'IMAGE'}">
-			<targetStepName>ingest image asset</targetStepName>
-		</transition>
-		<transition condition="${mediaType == 'DOCUMENT'}">
-			<targetStepName>ingest document asset</targetStepName>
-		</transition>
-		<transition condition="${true}">
-			<targetStepName>ingest other asset</targetStepName>
-		</transition>
-
-	</setContextData>
+* Transitions:  
+    * Transitioning using a noopStep vs transitions within a step:
+        * A noopStep is its own step that moves the workflow to different steps based on a logical evaluation:
+            * Example of a transition using a noopStep, see example 1 in workflowExamples
+        * Transitioning within a step is _essentially_ like having a noopStep within the step that you are using
+            * Example of a transition within a step, see example 2 in workflowExamples
+    
 
 * Versioning (GitHub)
     * Any questions?
