@@ -14,6 +14,7 @@
         * name="create proxy" or "generate proxy"
     * A noopStep is transitioning based on whether a file exists within the managed repo or not:
         * name="check if file exists"
+    * Transitioning using a noopStep vs transitions
     * Example of a transition using the noopStep above:
     \<!-- check if file exists
               if true, go to step name="continue processing"

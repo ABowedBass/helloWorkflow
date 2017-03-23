@@ -1,7 +1,7 @@
 # Training Hello Workflow
 
 ## Workflow Overview
-These workflows are designed to show different ways that variables can be set, passed down to subflows, and returned to the parent workflows. They also show how to use some of the different ways to print out values to different places (Reach Engine Logs, Catalina Logs, and execution label expressions)
+These workflows are designed to show different ways that variables can be set, passed down to subflows, and returned to the parent workflows. They also show how to use some of the different ways to print out values to different places (Reach Engine Logs, Catalina Logs, and execution label expressions). The end result will be transforming a string to equal 'Hello World'. If 'Hello World' is not the resulting string of the workflow, the workflow will fail.
 
 ## Import Order
 1. helloWorldWorkflow
@@ -10,7 +10,7 @@ These workflows are designed to show different ways that variables can be set, p
 
 ## Descriptions
 #### User Input
-* User adds a string to "Hello Workflow Input:" field on the user input form and selects either yes (true) or no (false) from "Allow Subflow Processing:". "Hello Workflow Input" has a default value built into the workflow, but will be overwritten by anything the user adds in. "Allow Subflow Processing:" has a default value of true.
+* User adds a string to "Hello Workflow Input:" field on the user input form and selects either yes (true) or no (false) from "Allow Subflow Processing:". "Hello Workflow Input" has a default value built into the workflow, but will be overwritten by anything the user adds in. "Allow Subflow Processing" has a default value of true.
 
 #### Result
 * These workflows process the inputs given by the user input form to equal "Hello World", as long as allowSubflowProcessing == true
@@ -18,7 +18,8 @@ These workflows are designed to show different ways that variables can be set, p
 #### Sysconfig
 * Here are the sysconfigs necessary:
 
-workflow.defaultUserHello=Hello \\World
+workflow.defaultUserHello=Hello Workflow
+workflow.groovyHello=Groovy Hello
 
 #### helloWorkflow (parent workflow)
 ##### Initial step

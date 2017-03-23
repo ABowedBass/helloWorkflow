@@ -22,37 +22,39 @@
     id="helloWorkflow"
     name="Hello Workflow"
     description="
-      The intetion of this workflow is to show examples of different workflow steps and how to test them, where they print information, 
-      and how to pass data defs between worfklows
+      The intetion of this workflow is to show examples of different workflow steps, how to test them, where they print information, 
+      and how to pass data defs between worfklows. The result of the workflow will be transforming whatever string is passed into this 'Parent Workflow'
+      to 'Hello World' as long as allowSubflowProcessing == true.
     "
     executionLabelExpression="A Hello World Workflow >>> Hello Workflow Input: ${userHello} | Allow Subflow Processing? >>> ${allowSubflowProcessing}"
     deadlineExpression=""
     subjectDOClassName=""
     showInUserInterface="true"
-    sdkVersion="5.4">
+    sdkVersion="5.4"
+    >
     
     
-    <!-- The initial step must always point to the first step in a workflow -->
+    
     <initialStepName>execute hello workflow</initialStepName>
-    <!-- .......................................... define helloWorkflow based on user input .......................................... -->
-    <!-- see if there was user input,
-            if the user did not enter anything or entered 'Hello Workflow' >>> set the value of userHello to helloWorkflow dataDef (variable)
-                if the user entered something different than 'Hello Workflow' >>> set the value of groovyHello to the helloWorkflow dataDef
-    -->
+    <!-- .......................................... define helloWorkflow based on userHello .......................................... -->
+    <!--
+         if the user did not enter anything or entered 'Hello Workflow' >>> set the value of userHello dataDef to helloWorkflow dataDef (variable)
+             else the user entered something different than 'Hello Workflow' >>> set the value of groovyHello to the helloWorkflow dataDef
+                 -->
     <noopStep name="execute hello workflow"
       executionLabelExpression="Checking the value of userHello >>> ${userHello}"
       pctComplete="10"
       >
-      <transition condition="${userHello.toLowerCase().equals('hello workflow')}">
+      <transition condition="${userHello.toLowerCase().equals('hello workflow')}"><!-- IF -->
         <targetStepName>set helloWorkflow</targetStepName>
       </transition>
       <transition condition="${true}">
-        <targetStepName>groovy hello</targetStepName>
+        <targetStepName>groovy hello</targetStepName><!-- ELSE -->
       </transition>
     </noopStep>
   
   
-  
+    <!-- IF -->
     <!-- set helloWorkflow to the value of userHello -->
     <setContextData name="set helloWorkflow"
       valueExpression="${userHello}"
@@ -63,8 +65,8 @@
       />
   
   
-  
-    <!-- step into groovy to set the value of  -->
+    <!-- ELSE -->
+    <!-- step into groovy to set the value of helloWorkflow to the groovyHello -->
     <groovyStep name="groovy hello" 
       resultDataDef="helloWorkflow"
       executionLabelExpression="Print out the value of helloWorkflow >>> ${helloWorkflow}"
@@ -77,14 +79,14 @@
           println ""
           println "*************************************"
           println ""
-          println "START Parent Groovy: "
+          println "START  _____ groovy hello _____"
           println ""
           println "If the value of userHello is not 'Hello Workflow',"
           println "     Then set the value of helloWorkflow to '" + groovyHello +"'"
           println ""
           println "userHello input == " + userHello
           println ""
-          println "END"
+          println "END    _____ groovy hello _____"
           println ""
           println "*************************************"
           println ""
